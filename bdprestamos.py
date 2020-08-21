@@ -30,21 +30,21 @@ def create_tablas():
     except (pymysql.err.OperationalError, pymysql.err.InternalError) as e:
         print("No se pudo crear la tabla clientes: ", e)
     #crear tabla prestamos
-    sql = 'CREATE TABLE IF NOT EXISTS prestamos(numero_prestamo INTEGER PRIMARY KEY NOT NULL, dni_cliente INTEGER NOT NULL, fecha_autorizacion DATETIME NOT NULL, fecha_tentativa DATETIME NOT NULL, cantidad_de_cuotas INTEGER NOT NULL, monto_prestamo INTEGER NOT NULL, precio_cuota INTEGER NOT NULL, fecha_entrega DATETIME NOT NULL, KEY dnisolicitante_dni_clientes_00_idx (dni_cliente), CONSTRAINT dnisolicitante_dni_clientes_00 FOREIGN KEY (dni_cliente) REFERENCES clientes (dni))'
+    sql = 'CREATE TABLE IF NOT EXISTS prestamos(numero_prestamo INTEGER PRIMARY KEY NOT NULL, dni_cliente INTEGER NOT NULL, fecha_autorizacion DATETIME NOT NULL, fecha_tentativa DATETIME NOT NULL, cantidad_de_cuotas INTEGER NOT NULL, monto_prestamo INTEGER NOT NULL, precio_cuota INTEGER NOT NULL, fecha_entrega DATETIME NOT NULL,cuil_empleado INTEGER NOT NULL, KEY dnisolicitante_dni_clientes_00_idx (dni_cliente), CONSTRAINT dnisolicitante_dni_clientes_00 FOREIGN KEY (dni_cliente) REFERENCES clientes (dni), KEY cuil_empleado_cuil_empleados_01_idx (cuil_empleado), CONSTRAINT cuil_empleado_cuil_empleados_01 FOREIGN KEY (cuil_empleado) REFERENCES empleados (cuil))'
     try:
         consulta.execute(sql)
         print('La tabla prestamos se encuentra disponible')
     except (pymysql.err.OperationalError, pymysql.err.InternalError) as e:
         print("No se pudo crear la tabla prestamos: ", e)
     #crear tabla empleados
-    sql = 'CREATE TABLE IF NOT EXISTS empleados(numero_prestamo INTEGER PRIMARY KEY NOT NULL, nombre VARCHAR(30) NOT NULL, cuil integer NOT NULL,KEY numero_prestamo_empleados_nro_prestamo_prestamos_01_idx (numero_prestamo), CONSTRAINT numero_prestamo_empleados_nro_prestamo_prestamos_01 FOREIGN KEY (numero_prestamo) REFERENCES prestamos (numero_prestamo))'
+    sql = 'CREATE TABLE IF NOT EXISTS empleados(cuil INTEGER PRIMARY KEY NOT NULL, nombre VARCHAR(30) NOT NULL)'
     try:
         consulta.execute(sql)
         print('La tabla empleados se encuentra disponible')
     except (pymysql.err.OperationalError, pymysql.err.InternalError) as e:
         print("No se pudo crear la tabla empleados: ", e)
     #crear tabla cuotas_prestamos 
-    sql = 'CREATE TABLE IF NOT EXISTS cuotas_prestamos(numero_prestamo INTEGER NOT NULL, numero_cuota INTEGER NOT NULL, fecha DATETIME NOT NULL, precio_pagado INTEGER NOT NULL, PRIMARY KEY (numero_prestamo, numero_cuota),KEY numerp_prestamo_couta_prestamo_numero_prestamo_prestamo_02_idx (numero_prestamo), CONSTRAINT numerp_prestamo_couta_prestamo_numero_prestamo_prestamo_02 FOREIGN KEY (numero_prestamo) REFERENCES prestamos (numero_prestamo))'
+    sql = 'CREATE TABLE IF NOT EXISTS cuotas_prestamos(numero_prestamo INTEGER NOT NULL, numero_cuota INTEGER NOT NULL, fecha DATETIME NOT NULL, precio_pagado INTEGER NOT NULL, cuil_empleado INTEGER NOT NULL, PRIMARY KEY (numero_prestamo, numero_cuota),KEY numerp_prestamo_couta_prestamo_numero_prestamo_prestamo_02_idx (numero_prestamo), CONSTRAINT numerp_prestamo_couta_prestamo_numero_prestamo_prestamo_02 FOREIGN KEY (numero_prestamo) REFERENCES prestamos (numero_prestamo), KEY cuil_empleado_cuil_empleados_04_idx (cuil_empleado), CONSTRAINT cuil_empleado_cuil_empleados_04 FOREIGN KEY (cuil_empleado) REFERENCES empleados (cuil))'
     try:
         consulta.execute(sql)
         print('La tabla cuotas_prestamos se encuentra disponible')
@@ -141,4 +141,25 @@ def get_all_data_clientes():
     finally:
         connection.close()
         cursor.close()
+
+def get_all_data_empleados():
+    try:
+        connection = pymysql.connect(host=host_name,
+                                    user=user_name,
+                                    password=password_name,
+                                    db=db_name)
+        sql_select_Query = "select * from empleados Order nombre"
+        cursor = connection.cursor()
+        cursor.execute(sql_select_Query)
+        lista_resultado = cursor.fetchall()
+        if lista_resultado == ():
+            print("No hay empleados...")
+        for row in lista_resultado:
+            print('[+]numero_prestamon:',row[0],'\n[+]nombre:',row[1],'\n[+]cuil:',row[2],"\n----------") 
+    except (pymysql.err.OperationalError, pymysql.err.InternalError) as e:
+        print("Error reading data from MySQL table", e)
+    finally:
+        connection.close()
+        cursor.close()
+
 
