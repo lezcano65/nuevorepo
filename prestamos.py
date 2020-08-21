@@ -1,7 +1,7 @@
 import pymysql
 from bdprestamos import*
 
-def crear_instancia_cuota_prestamo():
+def crear_instancia_cuotas_prestamos():
     print('datos de cuota de un prestamo ')
     while True:
         try:
@@ -12,7 +12,7 @@ def crear_instancia_cuota_prestamo():
             print('intente de nuevo')
     while True:
         try:
-            numero_cuota = int(input('ingrese el numero de prestamo: '))
+            numero_cuota = int(input('ingrese el numero de la cuota: '))
             if (numero_cuota != 0) and (numero_cuota < 7):
                 break
         except:
@@ -20,8 +20,8 @@ def crear_instancia_cuota_prestamo():
     fecha = input('ingrese la fecha del pago: ')
     while True:
         try:
-            precio = int(input('ingrese el numero de prestamo: '))
-            if (precio > 0):
+            precio_pagado = int(input('ingrese la cantidad del pago: '))
+            if (precio_pagado > 0):
                 break
         except:
             print('intente de nuevo')
@@ -32,7 +32,7 @@ def crear_instancia_cuota_prestamo():
                 break
         except:
             print('intente de nuevo')
-    return pago_coutas(numero_prestamo, numero_cuota, fecha, precio, cuil_empleado)
+    return cuotas_prestamos(numero_prestamo, numero_cuota, fecha, precio_pagado, cuil_empleado)
 
 def crear_instancia_prestamos():
     print('datos del prestamo ')
@@ -119,15 +119,25 @@ def crear_instancia_clientes():
     clientes(dni, nombres, apellidos,telefono,celular)
     return clientes(dni, nombres, apellidos,telefono,celular)
 
-class pago_coutas:
-    def __init__(self,numero_prestamo,numero_cuota,fecha_pago,monto_pagado,cuil_empleado):
+class cuotas_prestamos:
+    def __init__(self,numero_prestamo,numero_cuota,fecha,precio_pagado,cuil_empleado):
         self.numero_prestamo = numero_prestamo
         self.numero_cuota = numero_cuota
-        self.fecha_pago = fecha_pago
-        self.monto_pagado = monto_pagado
+        self.fecha = fecha
+        self.precio_pagado = precio_pagado
         self.cuil_empleado = cuil_empleado
+
     def registrar_pago(self):
-        print()
+        agregar_cuotas_prestamos(self.numero_prestamo,self.numero_cuota,self.fecha,self.precio_pagado,self.cuil_empleado)
+
+    def eliminar(self):
+        eliminar_cuota_prestamo(self.numero_prestamo,self.numero_cuota)
+
+    def listar(self):
+        get_all_data_cuotas_prestamos()
+
+    def modificar(self,buscar0,buscar1):
+        actualizar_cuotas_prestamos(self.numero_prestamo,self.numero_cuota,self.fecha,self.precio_pagado,self.cuil_empleado,buscar0,buscar1)
 
 class clientes:
     def __init__(self,dni,nombres,apellidos,telefono,celular):
@@ -137,14 +147,14 @@ class clientes:
         self.telefono = telefono
         self.celular = celular
 
-    def baja(self):
+    def eliminar(self):
         eliminar_cliente(self.dni)
 
     def listar(self):
         get_all_data_clientes()
 
-    def modificar(self):
-        update_data_cliente(self.dni,self.nombres,self.apellidos,self.telefono,self.celular,self.dni)
+    def modificar(self,buscar):
+        update_data_cliente(self.dni,self.nombres,self.apellidos,self.telefono,self.celular,buscar)
 
     def registrar_cliente(self):
         agregar_cliente(self.dni,self.nombres,self.apellidos,self.telefono,self.celular)
@@ -157,6 +167,15 @@ class empleados:
     def listar(self):
         get_all_data_empleados()
     
+    def nuevo(self):
+        agregar_empleados(self.cuil,self.nombre)
+
+    def eliminar(self):
+        eliminar_empleado(self.cuil)
+
+    def modificar(self,buscar):
+        actualizar_empleados(self.cuil, self.nombre,buscar)
+
 class prestamos:
     def __init__(self, numero_prestamo, fecha_autorizacion, monto, cantidad_cuotas, precio_cuota, fecha_tentativa, fecha_entrega,cuil_empleado):
         self.numero_prestamo = numero_prestamo
@@ -201,8 +220,13 @@ while (opcion != 11):
         ['8. Buscar empleado'],
         ['9. Modificar empleado'],
         ['10. Eliminar empleado'],
-        ['11. Salir del sistema']
-    ]
+        ['11. Salir del sistema'],
+        ['12. lista de cuotas'],
+        ['13. agregar cuota'],
+        ['14. buscar cuota'],
+        ['15. modificar cuota'],
+        ['16. eliminar cuota'],
+        ]
     for x in range(len(menu)):
         print(menu[x])
     opcion = int(input("Introduzca la opción deseada: "))
@@ -215,17 +239,53 @@ while (opcion != 11):
         buscar = input('ingrese el cliente a buscar: ')
         buscar_cliente_nombres(buscar)
     elif opcion == 4:
-        modificar = input('ingrese el cliente a modificar: ')
+        buscar = input('ingrese el cliente a buscar: ')
         x = crear_instancia_clientes()
-        update_data_cliente(x.dni,x.nombres,x.apellidos,x.telefono,x.celular,modificar)
+        x.modificar(buscar)
     elif opcion == 5:
         buscar = input('ingrese el cliente a buscar: ')
         buscar_cliente_nombres(buscar)
         controlardatos = input('SEGURO DESEA BORRAR LOS DATOS "1" para continuar: ')
         if controlardatos == "1":    
             eliminar_cliente(buscar)
-        print('hola')
+    elif opcion == 6:
+        get_all_data_empleados()
+    elif opcion == 7:
+        x=crear_instancia_empleados()
+        x.nuevo()
+    elif opcion == 8:
+        buscar = input('ingrese el cuil del empleado a buscar: ')
+        buscar_empleado(buscar)
+    elif opcion == 9:
+        buscar = input('ingrese el cuil del empleado a buscar: ')
+        x = crear_instancia_empleados()
+        x.modificar(buscar)
+    elif opcion == 10:
+        buscar = input('ingrese el empleado a buscar: ')
+        buscar_empleado(buscar)
+        controlardatos = input('SEGURO DESEA BORRAR LOS DATOS "1" para continuar: ')
+        if controlardatos == "1":    
+            eliminar_empleado(buscar)
     elif opcion == 11:
         print("Saliendo del sistema ...")
         exit()
-
+    elif opcion == 12:
+        get_all_data_cuotas_prestamos()
+    elif opcion == 13:
+        x = crear_instancia_cuotas_prestamos()
+        x.registrar_pago()
+    elif opcion == 14:
+        buscar = int(input('ingrese el numero del prestamo a buscar: '))
+        buscar_cuota_prestamo(buscar)
+    elif opcion == 15:      
+        buscar0 = input('ingrese el numero del prestamo a buscar: ')
+        buscar1 = input('ingrese el numero de la cuota a buscar: ')
+        x = crear_instancia_cuotas_prestamos()
+        x.modificar(buscar0,buscar1)
+    elif opcion == 16:#NO FUNCIONA T_T
+        buscar0 = input('ingrese el numero de prestamo a buscar: ')
+        buscar1 = input('ingrese el numero de la cuota a buscar: ')
+        buscar_cuota_prestamo(buscar0)
+        controlardatos = input('SEGURO DESEA BORRAR LOS DATOS "1" para continuar: ')
+        if controlardatos == "1":    
+            eliminar_cuota_prestamo(buscar0,buscar1)
