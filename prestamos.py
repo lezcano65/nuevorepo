@@ -81,7 +81,7 @@ def crear_instancia_prestamos():
                 break
         except:
             print('intente de nuevo')
-    return prestamos(numero_prestamo, fecha_autorizacion, monto, cantidad_cuotas, precio_cuota, fecha_tentativa, fecha_entrega, cuil_empleado)
+    return prestamos(numero_prestamo, dni_cliente , fecha_autorizacion, fecha_tentativa, cantidad_cuotas, monto, precio_cuota, fecha_entrega, cuil_empleado)
 
 def crear_instancia_empleados():
     print('datos del empleado ')
@@ -177,21 +177,22 @@ class empleados:
         actualizar_empleados(self.cuil, self.nombre,buscar)
 
 class prestamos:
-    def __init__(self, numero_prestamo, fecha_autorizacion, monto, cantidad_cuotas, precio_cuota, fecha_tentativa, fecha_entrega,cuil_empleado):
+    def __init__(self,numero_prestamo, dni_cliente, fecha_autorizacion , fecha_tentativa, cantidad_de_cuotas, monto_prestamo, precio_cuota, fecha_entrega, cuil_empleado):
         self.numero_prestamo = numero_prestamo
+        self.dni_cliente = dni_cliente
         self.fecha_autorizacion = fecha_autorizacion
-        self.monto = monto
-        self.cantidad_cuotas = cantidad_cuotas
-        self.precio_cuota = precio_cuota
         self.fecha_tentativa = fecha_tentativa
+        self.cantidad_de_cuotas = cantidad_de_cuotas
+        self.monto_prestamo = monto_prestamo
+        self.precio_cuota = precio_cuota
         self.fecha_entrega = fecha_entrega
         self.cuil_empleado = cuil_empleado
     def verificar_monto(self):
         pass
     def registrar_prestamo(self):
-        pass
-    def modificar(self):
-        pass 
+        agregar_prestamos(self.numero_prestamo,self.dni_cliente,self.fecha_autorizacion,self.fecha_tentativa,self.cantidad_de_cuotas,self.monto_prestamo,self.precio_cuota,self.fecha_entrega,self.cuil_empleado)
+    def modificar(self,numero_prestamo):
+        actualizar_prestamos(self.numero_prestamo,self.dni_cliente,self.fecha_autorizacion,self.fecha_tentativa,self.cantidad_de_cuotas,self.monto_prestamo,self.precio_cuota,self.fecha_entrega,self.cuil_empleado,self.numero_prestamo) 
     def calcular_fechapago(self):
         pass 
     def calcular_fechatentativa(self):
@@ -202,6 +203,7 @@ class prestamos:
         pass 
     def consultar_cliente(self):
         pass 
+
 
 
 create_tablas()
@@ -226,6 +228,11 @@ while (opcion != 11):
         ['14. buscar cuota'],
         ['15. modificar cuota'],
         ['16. eliminar cuota'],
+        ['17. lista de prestamos'],
+        ['18. agregar prestamo'],
+        ['19. buscar prestamo'],
+        ['20. modificar prestamo'],
+        ['21. eliminar prestamo'],
         ]
     for x in range(len(menu)):
         print(menu[x])
@@ -289,3 +296,22 @@ while (opcion != 11):
         controlardatos = input('SEGURO DESEA BORRAR LOS DATOS "1" para continuar: ')
         if controlardatos == "1":    
             eliminar_cuota_prestamo(buscar0,buscar1)
+    elif opcion == 17:
+        get_all_data_prestamos()
+    elif opcion == 18:
+        x = crear_instancia_prestamos()
+        x.registrar_prestamo()
+    elif opcion == 19:
+        buscar = int(input('ingrese el numero del prestamo a buscar: '))
+        buscar_prestamo(buscar)
+    elif opcion == 20:      
+        buscar = input('ingrese el numero del prestamo a buscar: ')
+        x = crear_instancia_prestamos()
+        x.modificar(buscar)
+    elif opcion == 21:
+        buscar = input('ingrese el numero de prestamo a buscar: ')
+        buscar_prestamo(buscar)
+        controlardatos = input('SEGURO DESEA BORRAR LOS DATOS "1" para continuar: ')
+        if controlardatos == "1":    
+            eliminar_prestamo(buscar)
+    

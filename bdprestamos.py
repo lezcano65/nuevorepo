@@ -326,3 +326,94 @@ def eliminar_cuota_prestamo(numero_prestamo, numero_cuota):
     except (pymysql.err.OperationalError, pymysql.err.InternalError) as e:
         print("Error consultando la tabla:", e)
 
+def get_all_data_prestamos():
+    try:
+        connection = pymysql.connect(host=host_name,
+                                    user=user_name,
+                                    password=password_name,
+                                    db=db_name)
+        sql_select_Query = "select * from prestamos Order by numero_prestamo"
+        cursor = connection.cursor()
+        cursor.execute(sql_select_Query)
+        lista_resultado = cursor.fetchall()
+        if lista_resultado == ():
+            print("No hay cuotas de prestamos...")
+        for row in lista_resultado:
+            print('[+]numero_prestamo:',row[0],'\n[+]dni_cliente:',row[1],'\n[+]fecha_autorizacion:',row[2],'\n[+]fecha_tentativa:',row[3],'\n[+]cantidad_de_cuotas:',row[4],'\n[+]monto_prestamo:',row[5],'\n[+]precio_cuota:',row[6],'\n[+]fecha_entrega:',row[7],'\n[+]cuil_empleado:',row[8],"\n----------") 
+    except (pymysql.err.OperationalError, pymysql.err.InternalError) as e:
+        print("Error reading data from MySQL table", e)
+    finally:
+        connection.close()
+        cursor.close()
+
+def buscar_prestamo(numero_prestamo):
+    try:
+        conexion = pymysql.connect(host=host_name, 
+                                    user=user_name,      
+                                    password=password_name,
+                                    db=db_name)
+        try:
+            with conexion.cursor() as cursor:
+                consulta = 'SELECT * FROM prestamos WHERE numero_prestamo = %s'
+                cursor.execute(consulta, numero_prestamo)
+                lista_contactos = cursor.fetchall()
+                if lista_contactos == ():
+                    print('prestamo no encontrado')
+                for lista in lista_contactos:
+                    print(lista)
+        finally:
+            conexion.close()
+    except (pymysql.err.OperationalError, pymysql.err.InternalError) as e:
+        print("Error consultando la tabla:", e)
+
+def agregar_prestamos(numero_prestamo, dni_cliente, fecha_autorizacion , fecha_tentativa, cantidad_de_cuotas, monto_prestamo, precio_cuota, fecha_entrega, cuil_empleado):
+    conexion = pymysql.connect(host=host_name, 
+                                user=user_name,      
+                                password=password_name,
+                                db=db_name)
+    consulta = conexion.cursor()
+    datos = (numero_prestamo, dni_cliente, fecha_autorizacion , fecha_tentativa, cantidad_de_cuotas, monto_prestamo, precio_cuota, fecha_entrega, cuil_empleado)
+    sql_select_Query = 'INSERT INTO prestamos(numero_prestamo, dni_cliente, fecha_autorizacion , fecha_tentativa, cantidad_de_cuotas, monto_prestamo, precio_cuota, fecha_entrega, cuil_empleado) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+    try:
+        consulta.execute(sql_select_Query, datos)
+        print("Datos guardados con exito")
+    except:
+        print("Ocurrió un error al intentar guardar los datos")
+    conexion.commit()
+    conexion.close()
+
+def actualizar_prestamos(numero_prestamo, dni_cliente, fecha_autorizacion , fecha_tentativa, cantidad_de_cuotas, monto_prestamo, precio_cuota, fecha_entrega, cuil_empleado, buscar):
+    conexion = pymysql.connect(host=host_name,
+                                user=user_name,
+                                password=password_name,
+                                db=db_name)
+    consulta = conexion.cursor()
+    sql_select_Query = 'UPDATE prestamos SET numero_prestamo = %s, dni_cliente = %s, fecha_autorizacion = %s, fecha_tentativa = %s,cantidad_de_cuotas = %s, monto_prestamo = %s, precio_cuota = %s, fecha_entrega = %s, cuil_empleado = %s WHERE numero_prestamo = %s '
+    datos = (numero_prestamo, dni_cliente, fecha_autorizacion , fecha_tentativa, cantidad_de_cuotas, monto_prestamo, precio_cuota, fecha_entrega, cuil_empleado, buscar)
+    try:
+        consulta.execute(sql_select_Query, datos)
+        print("Datos modificados con exito")
+    except:
+        print("Ocurrió un error al intentar guardar los datos")
+    conexion.commit()
+    conexion.close()
+    consulta.close()
+
+def eliminar_prestamo(numero_prestamo):
+    try:
+        conexion = pymysql.connect(host=host_name, 
+                                    user=user_name,      
+                                    password=password_name,
+                                    db=db_name)
+        try:
+            with conexion.cursor() as cursor:
+                print("borrando ...")
+                datos = (numero_prestamo)
+                sql_select_Query = 'DELETE FROM prestamos WHERE numero_prestamo = %s'
+                cursor.execute(sql_select_Query, datos)
+                print('cuota_prestamo eliminado')
+        finally:
+            conexion.commit()
+            conexion.close()
+    except (pymysql.err.OperationalError, pymysql.err.InternalError) as e:
+        print("Error consultando la tabla:", e)
