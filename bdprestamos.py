@@ -315,8 +315,10 @@ def eliminar_cuota_prestamo(numero_prestamo, numero_cuota):
                                     db=db_name)
         try:
             with conexion.cursor() as cursor:
-                sql_select_Query = 'DELETE FROM cuotas_prestamos WHERE numero_prestamo= %s and numero_cuota = %s'
-                cursor.execute(sql_select_Query, numero_prestamo, numero_cuota)
+                print("borrando ...")
+                datos = (numero_prestamo, numero_cuota)
+                sql_select_Query = 'DELETE FROM cuotas_prestamos WHERE (numero_prestamo = %s) AND (numero_cuota = %s)'
+                cursor.execute(sql_select_Query, datos)
                 print('cuota_prestamo eliminado')
         finally:
             conexion.commit()

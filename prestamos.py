@@ -282,7 +282,7 @@ while (opcion != 11):
         buscar1 = input('ingrese el numero de la cuota a buscar: ')
         x = crear_instancia_cuotas_prestamos()
         x.modificar(buscar0,buscar1)
-    elif opcion == 16:#NO FUNCIONA T_T
+    elif opcion == 16:
         buscar0 = input('ingrese el numero de prestamo a buscar: ')
         buscar1 = input('ingrese el numero de la cuota a buscar: ')
         buscar_cuota_prestamo(buscar0)
